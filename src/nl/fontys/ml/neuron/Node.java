@@ -1,6 +1,5 @@
 package nl.fontys.ml.neuron;
 
-import java.util.HashMap;
 import nl.fontys.ml.layer.Layer;
 
 /**

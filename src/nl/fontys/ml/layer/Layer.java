@@ -15,27 +15,27 @@ import nl.fontys.ml.neuron.Node;
  *
  * @author Dominik Kaisers <d.kaisers@student.fontys.nl>
  */
-public abstract class Layer {
+public class Layer {
     
     /**
      * List of nodes in this layer.
      */
-    private List<Node> nodes;
+    protected List<Node> nodes;
     
     /**
      * The previous layer. Null indicates, that this is the input layer.
      */
-    private Layer previousLayer;
+    protected Layer previousLayer;
     
     /**
      * The next layer. Null indicates, that this is the output layer.
      */
-    private Layer nextLayer;
+    protected Layer nextLayer;
     
     /**
      * The error gradient sum, the next layer temporarily saves in its previous layer for error back propagation.
      */
-    private float nextLayerErrorGradientSum;
+    protected double nextLayerErrorGradientSum;
     
     /**
      * Constructor of a Layer. Sets the next layer in the given previous layer (if != null) and creates the bias node,
@@ -75,34 +75,13 @@ public abstract class Layer {
     }
     
     /**
-     * Calculates the error of the next layer when backpropagating. If this is the output layer, the method will use
-     * the error calculated by the actual and expected output, else it will use the saved error gradient sum.
-     * 
-     * @return The error of the next layer, used for updating the weights of this layer.
-     */
-    public float getError() {
-        return 0;
-    }
-    
-    /**
      * Called by the output-layer-back-propagation. Goes through the nodes and updates their weights. Calls this
      * method recursively on the previous layer. Executed till the input layer is reached.
      * 
      * @param nextLayerErrorGradientSum Error gradient sum of calling layer.
      */
-    public void backPropagateError(float nextLayerErrorGradientSum) {
+    protected void backPropagateError(double nextLayerErrorGradientSum) {
         this.nextLayerErrorGradientSum = nextLayerErrorGradientSum;
-    }
-    
-    /**
-     * Called by the network on the output layer to start the back propagation. After execution, the back propagation on
-     * the previous layer is called.
-     * 
-     * @param expectedOutputs Expected outputs.
-     * @param actualOutputs Actual Outputs.
-     */
-    public void backPropagateError(List<Float> expectedOutputs, List<Float> actualOutputs) {
-        
     }
     
 }
