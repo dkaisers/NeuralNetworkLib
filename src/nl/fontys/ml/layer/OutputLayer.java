@@ -1,6 +1,9 @@
 package nl.fontys.ml.layer;
 
-import java.util.List;
+import java.util.Map;
+import nl.fontys.ml.NeuralNetwork;
+import nl.fontys.ml.neuron.Neuron;
+import nl.fontys.ml.neuron.Node;
 
 /**
  *
@@ -31,13 +34,27 @@ public class OutputLayer extends Layer {
      * the previous layer is called.
      *
      * @param expectedOutput Expected output.
+     * @param learningRate learningRate.
      */
-    public void backPropagateError(Double[] expectedOutput) {
-        double errorGradientSum = 0;
+    public void backPropagateError(Double[] expectedOutput, double learningRate) {
+        // Back propagation
+        for (int i = 0; i < this.nodes.size(); i++) {
+            Neuron node = (Neuron) this.nodes.get(i);
+            
+            double output = node.getOutput();
+            double error = expectedOutput[i] - output;
+            double errorGradient = error * output * (1 - output);
+            
+            for (Map.Entry<Node, Double> weight : node.getInputLayer().entrySet()) {
+                double newWeight = weight.getValue() + (learningRate * errorGradient * weight.getKey().getOutput());
+                node.getInputLayer().put(weight.getKey(), newWeight);
+                
+                double gradientSum = previousLayer.errGradientSum.get(node) + (newWeight * errorGradient);
+                previousLayer.errGradientSum.put(node, gradientSum);
+            }
+        }
         
-        // TODO: Back propagation
-        
-        previousLayer.backPropagateError(errorGradientSum);
+        previousLayer.backPropagateError(learningRate);
     }
 
 }

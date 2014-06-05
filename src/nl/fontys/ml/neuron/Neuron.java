@@ -29,5 +29,9 @@ public class Neuron extends Node{
     public double getOutput() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
+    public HashMap<Node, Double> getInputLayer() {
+        return inputLayer;
+    }
     
 }
