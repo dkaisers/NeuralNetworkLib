@@ -23,8 +23,6 @@ public abstract class Node {
     
     public abstract double getOutput();
     
-    // public abstract void updateWeights();
-    
     /**
      * Sigmoid activation function.
      * 

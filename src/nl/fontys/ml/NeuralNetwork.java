@@ -1,5 +1,6 @@
 package nl.fontys.ml;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import nl.fontys.ml.layer.InputLayer;
@@ -28,13 +29,20 @@ public class NeuralNetwork {
     private double accuracy;
     
     private double learningRate;
-    private int numberOfClasses;
-    private int numberOfInputNodes;
-    private int numberOfHiddenLayers;
-    private int numberOfNodesPerLayer;
+    private final int numberOfClasses;
+    private final int numberOfInputNodes;
+    private final int numberOfHiddenLayers;
+    private final int numberOfNodesPerLayer;
     
     private InputLayer inputLayer;
     private OutputLayer outputLayer;
+
+    public NeuralNetwork(int numberOfClasses, int numberOfInputNodes, int numberOfHiddenLayers, int numberOfNodesPerLayer) {
+        this.numberOfClasses = numberOfClasses;
+        this.numberOfInputNodes = numberOfInputNodes;
+        this.numberOfHiddenLayers = numberOfHiddenLayers;
+        this.numberOfNodesPerLayer = numberOfNodesPerLayer;
+    }
     
     public NeuralNetwork getBestIteration() {
         return null;
@@ -45,9 +53,27 @@ public class NeuralNetwork {
      * 
      * @param trainingData The data to train on.
      * @param numberOfIterations Number of times to train.
+     * @return Newly trained neural network.
      */
     public NeuralNetwork trainNetwork(List<Instance> trainingData, int numberOfIterations) {
-        return null;
+        // TODO Redo with recursion.
+        
+        NeuralNetwork newNetwork = NeuralNetwork.deepCopy(this);
+        newNetwork.previousIteration = this;
+        newNetwork.iteration = iteration++;
+        this.nextIteration = newNetwork;
+        
+        for (int i = 0; i < numberOfIterations; i++) {
+            for (Instance instance : trainingData) {
+                newNetwork.inputLayer.setInputData(instance.getInputData());
+                Double[] output = newNetwork.outputLayer.getOutput();
+                
+                if (!Arrays.equals(output, instance.getOutputData()))
+                    newNetwork.outputLayer.backPropagateError(instance.getOutputData(), learningRate);
+            }
+        }
+        
+        return newNetwork;
     }
     
     /**
@@ -57,15 +83,10 @@ public class NeuralNetwork {
      * @param trainingData The data to train on.
      * @param validationData The data to validate on.
      * @param stopAfter Number of times the network gets worse, after which the training is stopped.
+     * @return Newly trained NeuralNetwork.
      */
     public NeuralNetwork trainNetwork(List<Instance> trainingData, List<Instance> validationData, int stopAfter) {
-        return null;
-    }
-    
-    /**
-     * Called by one of the public methods to train the network a single time.
-     */
-    private void trainNetwork() {
+        throw new UnsupportedOperationException("Not implemented yet.");
     }
     
     /**
@@ -80,7 +101,7 @@ public class NeuralNetwork {
     }
     
     public static NeuralNetwork deepCopy(NeuralNetwork network) {
-        return null;
+        throw new UnsupportedOperationException("Not implemented yet.");
     }
     
 }

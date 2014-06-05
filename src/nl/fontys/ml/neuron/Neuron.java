@@ -7,6 +7,7 @@
 package nl.fontys.ml.neuron;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Output neurons get a their information to calculate the outcome from their
@@ -27,7 +28,13 @@ public class Neuron extends Node{
      */
     @Override
     public double getOutput() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        double output = 0;
+        
+        for (Map.Entry<Node, Double> input : inputLayer.entrySet()) {
+            output += input.getValue() * input.getKey().getOutput();
+        }
+        
+        return output;
     }
 
     public HashMap<Node, Double> getInputLayer() {
