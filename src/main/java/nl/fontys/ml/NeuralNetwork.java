@@ -1,5 +1,6 @@
 package nl.fontys.ml;
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -23,7 +24,7 @@ import nl.fontys.ml.layer.OutputLayer;
  *
  * @author Dominik Kaisers <d.kaisers@student.fontys.nl>
  */
-public class NeuralNetwork {
+public class NeuralNetwork implements Serializable {
 
     private int iteration;
 
@@ -147,6 +148,7 @@ public class NeuralNetwork {
 
     /**
      * Test the neural network against validation data.
+     *
      * @param validationData The data to validate on.
      * @return Accuracy between 0 and 1.
      */
@@ -210,5 +212,50 @@ public class NeuralNetwork {
 
     public int getNumberOfNodesPerLayer() {
         return numberOfNodesPerLayer;
+    }
+
+    /**
+     * Serialize this network and save it to a file at the given path.
+     *
+     * @param filepath Filepath.
+     */
+    public void saveToFile(String filepath) {
+        try {
+            FileOutputStream fos = new FileOutputStream(filepath);
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+
+            oos.writeObject(this);
+
+            oos.close();
+            fos.close();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    /**
+     * Load a serialized neural network from file.
+     *
+     * @param filepath Filepath to serialized network.
+     * @return NeuralNetwork or null if error.
+     */
+    public static NeuralNetwork loadFromFile(String filepath) {
+        NeuralNetwork nn = null;
+
+        try {
+            FileInputStream fis = new FileInputStream(filepath);
+            ObjectInputStream ois = new ObjectInputStream(fis);
+
+            nn = (NeuralNetwork) ois.readObject();
+
+            ois.close();
+            fis.close();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        } catch (ClassNotFoundException ex) {
+            ex.printStackTrace();
+        }
+
+        return nn;
     }
 }

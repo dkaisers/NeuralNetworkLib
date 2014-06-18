@@ -5,6 +5,7 @@
  */
 package nl.fontys.ml.layer;
 
+import java.io.Serializable;
 import java.util.*;
 
 import nl.fontys.ml.neuron.InputNode;
@@ -15,7 +16,7 @@ import nl.fontys.ml.neuron.Node;
  *
  * @author Dominik Kaisers <d.kaisers@student.fontys.nl>
  */
-public class Layer {
+public class Layer implements Serializable {
 
     /**
      * List of nodes in this layer.

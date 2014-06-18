@@ -2,11 +2,13 @@ package nl.fontys.ml.neuron;
 
 import nl.fontys.ml.layer.Layer;
 
+import java.io.Serializable;
+
 /**
  *
  * @author Dominik Kaisers <d.kaisers@student.fontys.nl>
  */
-public abstract class Node {
+public abstract class Node implements Serializable {
     
     /**
      * The layer, the node belongs to for the purpose of backpropagating the error.
