@@ -5,10 +5,8 @@
  */
 package nl.fontys.ml.layer;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
 import nl.fontys.ml.neuron.InputNode;
 import nl.fontys.ml.neuron.Neuron;
 import nl.fontys.ml.neuron.Node;
@@ -62,6 +60,22 @@ public class Layer {
             InputNode bias = new InputNode(1);
             this.nodes.add(bias);
             this.errGradientSum.put(bias, 0d);
+        }
+    }
+
+    public Layer(Layer previousLayer, boolean createBiasNode, int numberOfRandomNodes) {
+        this(previousLayer, createBiasNode);
+
+        HashMap<Node, Double> inputLayer = new HashMap<>();
+        Random r = new Random();
+        for (Node n : previousLayer.nodes) {
+            inputLayer.put(n, r.nextDouble());
+        }
+
+        for (int i = 0; i < numberOfRandomNodes; i++) {
+            Neuron neuron = new Neuron();
+            neuron.setInputLayer(inputLayer);
+            nodes.add(neuron);
         }
     }
 

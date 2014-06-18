@@ -20,7 +20,7 @@ public class Neuron extends Node{
     /**
      * HashMap with the weights for every input neuron.
      */
-    private HashMap<Node, Double> inputLayer;
+    protected HashMap<Node, Double> inputLayer;
 
     /**
      * Calculates the output based on the weights and input values.

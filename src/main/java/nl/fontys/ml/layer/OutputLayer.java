@@ -11,8 +11,8 @@ import nl.fontys.ml.neuron.Node;
  */
 public class OutputLayer extends Layer {
 
-    public OutputLayer(Layer previousLayer) {
-        this(previousLayer, false);
+    public OutputLayer(Layer previousLayer, int numberOfClasses) {
+        super(previousLayer, false, numberOfClasses);
     }
 
     private OutputLayer(Layer previousLayer, boolean createBiasNode) {

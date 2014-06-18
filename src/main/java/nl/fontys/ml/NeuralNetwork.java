@@ -42,6 +42,16 @@ public class NeuralNetwork {
         this.numberOfInputNodes = numberOfInputNodes;
         this.numberOfHiddenLayers = numberOfHiddenLayers;
         this.numberOfNodesPerLayer = numberOfNodesPerLayer;
+
+        this.inputLayer = new InputLayer(numberOfInputNodes);
+
+        Layer lastLayer = inputLayer;
+        for (int i = 0; i < numberOfHiddenLayers; i++) {
+            Layer hiddenLayer = new Layer(lastLayer, true, numberOfNodesPerLayer);
+            lastLayer = hiddenLayer;
+        }
+
+        this.outputLayer = new OutputLayer(lastLayer, numberOfClasses);
     }
     
     public NeuralNetwork getBestIteration() {
