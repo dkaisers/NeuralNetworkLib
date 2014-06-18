@@ -19,6 +19,10 @@ public class OutputLayer extends Layer {
         super(previousLayer, createBiasNode);
     }
 
+    protected OutputLayer() {
+        super();
+    }
+
     public Double[] getOutput() {
         Double[] output = new Double[this.nodes.size()];
 

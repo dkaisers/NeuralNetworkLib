@@ -13,7 +13,6 @@ import nl.fontys.ml.neuron.Neuron;
 import nl.fontys.ml.neuron.Node;
 
 /**
- *
  * @author Dominik Kaisers <d.kaisers@student.fontys.nl>
  */
 public class Layer implements Serializable {
@@ -37,6 +36,14 @@ public class Layer implements Serializable {
      * The error gradient sums of the next layer for each node in this layer.
      */
     protected Map<Node, Double> errGradientSum;
+
+    /**
+     * protected Constructor for deepCopy
+     * creates the bias node, if wanted.
+     */
+    protected Layer() {
+        errGradientSum = new HashMap<>();
+    }
 
     /**
      * Constructor of a Layer. Sets the next layer in the given previous layer (if != null) and
@@ -100,7 +107,7 @@ public class Layer implements Serializable {
      * Called by the output-layer-back-propagation. Goes through the nodes and updates their
      * weights. Calls this method recursively on the previous layer. Executed till the input layer
      * is reached.
-     * 
+     *
      * @param learningRate Learning rate.
      */
     protected void backPropagateError(double learningRate) {
@@ -120,8 +127,23 @@ public class Layer implements Serializable {
                 }
             }
         }
-        
         previousLayer.backPropagateError(learningRate);
     }
 
+
+    public Layer deepCopy() {
+        Layer layer = null;
+        if (this instanceof InputLayer) layer = new InputLayer();
+        else if (this instanceof OutputLayer) layer = new OutputLayer();
+        ArrayList<Node> nodeCopy = new ArrayList<>(nodes.size());
+        for (Node node : nodes) {
+            nodeCopy.add(node.deepCopy());
+        }
+
+        if (layer != null) {
+            layer.nodes = nodeCopy;
+        }
+
+        return layer;
+    }
 }

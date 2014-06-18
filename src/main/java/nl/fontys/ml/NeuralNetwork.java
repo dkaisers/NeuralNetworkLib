@@ -59,6 +59,10 @@ public class NeuralNetwork implements Serializable {
         this.outputLayer = new OutputLayer(lastLayer, numberOfClasses);
     }
 
+    public NeuralNetwork getBestIteration() {
+        return null;
+    }
+
     /**
      * Trains the network a given number of times and returns the last iteration.
      *
@@ -68,7 +72,8 @@ public class NeuralNetwork implements Serializable {
      */
     public NeuralNetwork trainNetwork(List<Instance> trainingData, int numberOfIterations) {
         // Copy network
-        NeuralNetwork newNetwork = NeuralNetwork.deepCopy(this);
+
+        NeuralNetwork newNetwork = deepCopy();
         newNetwork.iteration = iteration++;
 
         // Train copied network
@@ -96,14 +101,15 @@ public class NeuralNetwork implements Serializable {
      * the one it was created from. After that, the iteration with the best accuracy is returned.
      *
      * @param trainingData       The data to train on.
-     * @param validationData     The data to validate on.
+     * @param classification     The data to validate on.
      * @param numberOfIterations Number of times to train.
      * @return Newly trained NeuralNetwork.
      */
-    public NeuralNetwork trainNetwork(Double[][] trainingData, Double[] validationData, int numberOfIterations) {
+    public NeuralNetwork trainNetwork(Double[][] trainingData, Double[][] classification, int numberOfIterations) {
         List<Instance> trainingList = new ArrayList<>(trainingData.length);
-        for (Double[] d : trainingData) {
-            trainingList.add(new Instance(d, validationData));
+        for (int i = 0; i < trainingData.length; i++) {
+            Double[] d = trainingData[i];
+            trainingList.add(new Instance(d, classification[i]));
         }
         return trainNetwork(trainingList, numberOfIterations);
     }
@@ -183,11 +189,14 @@ public class NeuralNetwork implements Serializable {
     /**
      * Deep copy a given neural network.
      *
-     * @param network Network to copy.
      * @return Copied neural network.
      */
-    public static NeuralNetwork deepCopy(NeuralNetwork network) {
-        throw new UnsupportedOperationException("Not implemented yet.");
+    public NeuralNetwork deepCopy() {
+        NeuralNetwork newNetwork = new NeuralNetwork(this.learningRate, this.numberOfClasses, this.numberOfInputNodes, this.numberOfHiddenLayers, this.numberOfNodesPerLayer);
+        newNetwork.iteration = this.iteration;
+        newNetwork.inputLayer = (InputLayer) inputLayer.deepCopy();
+        newNetwork.outputLayer = (OutputLayer) outputLayer.deepCopy();
+        return newNetwork;
     }
 
     public int getIteration() {

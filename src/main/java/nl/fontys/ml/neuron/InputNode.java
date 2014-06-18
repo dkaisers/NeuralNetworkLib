@@ -8,8 +8,8 @@ package nl.fontys.ml.neuron;
  *
  * @author Dominik Kaisers <d.kaisers@student.fontys.nl>
  */
-public class InputNode extends Node{
-    
+public class InputNode extends Node {
+
     private double inputValue;
 
     public InputNode() {
@@ -31,12 +31,17 @@ public class InputNode extends Node{
     /**
      * Simply returns the InputNeurons input value, as these neurons do not
      * calculate anything.
-     * 
+     *
      * @return Input value.
      */
     @Override
     public double getOutput() {
         return this.inputValue;
     }
-    
+
+    @Override
+    public Node deepCopy() {
+        return new InputNode(inputValue);
+    }
+
 }
