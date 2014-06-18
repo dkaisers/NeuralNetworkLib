@@ -91,7 +91,7 @@ public class NeuralNetwork {
                 newNetwork.inputLayer.setInputData(instance.getInputData());
                 Double[] output = newNetwork.outputLayer.getOutput();
 
-                // Backpropagate error if classification was wrong
+                // Back propagate error if classification was wrong
                 if (!Arrays.equals(output, instance.getOutputData())) {
                     errorCount++;
                     newNetwork.outputLayer.backPropagateError(instance.getOutputData(), learningRate);
@@ -146,5 +146,36 @@ public class NeuralNetwork {
     public double getAccuracy() {
         return accuracy;
     }
-    
+
+    public int getIteration() {
+        return iteration;
+    }
+
+    public NeuralNetwork getPreviousIteration() {
+        return previousIteration;
+    }
+
+    public double getLearningRate() {
+        return learningRate;
+    }
+
+    public NeuralNetwork getNextIteration() {
+        return nextIteration;
+    }
+
+    public int getNumberOfClasses() {
+        return numberOfClasses;
+    }
+
+    public int getNumberOfInputNodes() {
+        return numberOfInputNodes;
+    }
+
+    public int getNumberOfHiddenLayers() {
+        return numberOfHiddenLayers;
+    }
+
+    public int getNumberOfNodesPerLayer() {
+        return numberOfNodesPerLayer;
+    }
 }
