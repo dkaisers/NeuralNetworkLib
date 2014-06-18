@@ -24,17 +24,21 @@ public class Neuron extends Node{
 
     /**
      * Calculates the output based on the weights and input values.
-     * @return 
+     * @return Output for this neuron.
      */
     @Override
     public double getOutput() {
-        double output = 0;
+        double inputSum = 0;
         
         for (Map.Entry<Node, Double> input : inputLayer.entrySet()) {
-            output += input.getValue() * input.getKey().getOutput();
+            inputSum += input.getValue() * input.getKey().getOutput();
         }
         
-        return output;
+        return sigmoid(inputSum);
+    }
+
+    public void setInputLayer(HashMap<Node, Double> inputLayer) {
+        this.inputLayer = inputLayer;
     }
 
     public HashMap<Node, Double> getInputLayer() {
