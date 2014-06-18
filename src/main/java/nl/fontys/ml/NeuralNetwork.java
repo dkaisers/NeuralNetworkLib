@@ -37,23 +37,28 @@ public class NeuralNetwork {
     private InputLayer inputLayer;
     private OutputLayer outputLayer;
 
-    public NeuralNetwork(int numberOfClasses, int numberOfInputNodes, int numberOfHiddenLayers, int numberOfNodesPerLayer) {
+    public NeuralNetwork(double learningRate, int numberOfClasses, int numberOfInputNodes, int numberOfHiddenLayers, int numberOfNodesPerLayer) {
+        // Set data
+        this.learningRate = learningRate;
         this.numberOfClasses = numberOfClasses;
         this.numberOfInputNodes = numberOfInputNodes;
         this.numberOfHiddenLayers = numberOfHiddenLayers;
         this.numberOfNodesPerLayer = numberOfNodesPerLayer;
 
+        // Create input layer
         this.inputLayer = new InputLayer(numberOfInputNodes);
 
+        // Create hidden layers and set references
         Layer lastLayer = inputLayer;
         for (int i = 0; i < numberOfHiddenLayers; i++) {
             Layer hiddenLayer = new Layer(lastLayer, true, numberOfNodesPerLayer);
             lastLayer = hiddenLayer;
         }
 
+        // Create output layer
         this.outputLayer = new OutputLayer(lastLayer, numberOfClasses);
     }
-    
+
     public NeuralNetwork getBestIteration() {
         return null;
     }
@@ -66,23 +71,38 @@ public class NeuralNetwork {
      * @return Newly trained neural network.
      */
     public NeuralNetwork trainNetwork(List<Instance> trainingData, int numberOfIterations) {
-        // TODO Redo with recursion.
-        
+        // Used for accuracy calculation
+        double testCaseCount = 0;
+        double errorCount = 0;
+
+        // Copy network
         NeuralNetwork newNetwork = NeuralNetwork.deepCopy(this);
         newNetwork.previousIteration = this;
         newNetwork.iteration = iteration++;
         this.nextIteration = newNetwork;
-        
+
+        // Train copied network
         for (int i = 0; i < numberOfIterations; i++) {
+            // Go through every instance
             for (Instance instance : trainingData) {
+                testCaseCount++;
+
+                // Set input data for instance
                 newNetwork.inputLayer.setInputData(instance.getInputData());
                 Double[] output = newNetwork.outputLayer.getOutput();
-                
-                if (!Arrays.equals(output, instance.getOutputData()))
+
+                // Backpropagate error if classification was wrong
+                if (!Arrays.equals(output, instance.getOutputData())) {
+                    errorCount++;
                     newNetwork.outputLayer.backPropagateError(instance.getOutputData(), learningRate);
+                }
             }
         }
-        
+
+        // Calculate accuracy of new network
+        newNetwork.accuracy = errorCount / testCaseCount;
+
+        // Return new network
         return newNetwork;
     }
     
@@ -109,9 +129,22 @@ public class NeuralNetwork {
         this.inputLayer.setInputData(inputData);
         return this.outputLayer.getOutput();
     }
-    
+
+    /**
+     * Deep copy a given neural network.
+     * @param network Network to copy.
+     * @return Copied neural network.
+     */
     public static NeuralNetwork deepCopy(NeuralNetwork network) {
         throw new UnsupportedOperationException("Not implemented yet.");
+    }
+
+    /**
+     * Get the networks accuracy that was established by training.
+     * @return Accuracy.
+     */
+    public double getAccuracy() {
+        return accuracy;
     }
     
 }
