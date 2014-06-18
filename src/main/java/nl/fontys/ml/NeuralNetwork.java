@@ -26,9 +26,6 @@ import nl.fontys.ml.layer.OutputLayer;
 public class NeuralNetwork {
 
     private int iteration;
-    private NeuralNetwork previousIteration;
-    private NeuralNetwork nextIteration;
-    private double accuracy;
 
     private double learningRate;
     private final int numberOfClasses;
@@ -61,10 +58,6 @@ public class NeuralNetwork {
         this.outputLayer = new OutputLayer(lastLayer, numberOfClasses);
     }
 
-    public NeuralNetwork getBestIteration() {
-        return null;
-    }
-
     /**
      * Trains the network a given number of times and returns the last iteration.
      *
@@ -73,21 +66,14 @@ public class NeuralNetwork {
      * @return Newly trained neural network.
      */
     public NeuralNetwork trainNetwork(List<Instance> trainingData, int numberOfIterations) {
-        // Used for accuracy calculation
-        double testCaseCount = 0;
-        double errorCount = 0;
-
         // Copy network
         NeuralNetwork newNetwork = NeuralNetwork.deepCopy(this);
-        newNetwork.previousIteration = this;
         newNetwork.iteration = iteration++;
-        this.nextIteration = newNetwork;
 
         // Train copied network
         for (int i = 0; i < numberOfIterations; i++) {
             // Go through every instance
             for (Instance instance : trainingData) {
-                testCaseCount++;
 
                 // Set input data for instance
                 newNetwork.inputLayer.setInputData(instance.getInputData());
@@ -95,14 +81,10 @@ public class NeuralNetwork {
 
                 // Back propagate error if classification was wrong
                 if (!Arrays.equals(output, instance.getOutputData())) {
-                    errorCount++;
                     newNetwork.outputLayer.backPropagateError(instance.getOutputData(), learningRate);
                 }
             }
         }
-
-        // Calculate accuracy of new network
-        newNetwork.accuracy = errorCount / testCaseCount;
 
         // Return new network
         return newNetwork;
@@ -136,7 +118,53 @@ public class NeuralNetwork {
      * @return Newly trained NeuralNetwork.
      */
     public NeuralNetwork trainNetwork(List<Instance> trainingData, List<Instance> validationData, int stopAfter) {
-        throw new UnsupportedOperationException("Not implemented yet.");
+        int worseAttempts = 0;
+        NeuralNetwork best = this;
+        double bestAccuracy = 1d;
+        NeuralNetwork current = this;
+
+        // Stop when the network did not get more accurate after stopAfter continuous attempts
+        while (worseAttempts < stopAfter) {
+            // Train next iterations
+            current = current.trainNetwork(trainingData, 1);
+
+            // Validate
+            double currentAccuracy = current.validate(validationData);
+
+            // Check if network got better or worse
+            if (currentAccuracy >= bestAccuracy)
+                worseAttempts++;
+            else {
+                best = current;
+                bestAccuracy = currentAccuracy;
+                worseAttempts = 0;
+            }
+        }
+
+        // Return best network
+        return best;
+    }
+
+    /**
+     * Test the neural network against validation data.
+     * @param validationData The data to validate on.
+     * @return Accuracy between 0 and 1.
+     */
+    public double validate(List<Instance> validationData) {
+        double errorCount = 0;
+
+        // Iterate through validation instances
+        for (Instance instance : validationData) {
+            Double[] output = outputLayer.getOutput();
+
+            // Increment error count if the instance was wrongly classified
+            if (!Arrays.equals(output, instance.getOutputData())) {
+                errorCount++;
+            }
+        }
+
+        // Return accuracy
+        return errorCount / validationData.size();
     }
 
     /**
@@ -160,29 +188,12 @@ public class NeuralNetwork {
         throw new UnsupportedOperationException("Not implemented yet.");
     }
 
-    /**
-     * Get the networks accuracy that was established by training.
-     *
-     * @return Accuracy.
-     */
-    public double getAccuracy() {
-        return accuracy;
-    }
-
     public int getIteration() {
         return iteration;
     }
 
-    public NeuralNetwork getPreviousIteration() {
-        return previousIteration;
-    }
-
     public double getLearningRate() {
         return learningRate;
-    }
-
-    public NeuralNetwork getNextIteration() {
-        return nextIteration;
     }
 
     public int getNumberOfClasses() {
