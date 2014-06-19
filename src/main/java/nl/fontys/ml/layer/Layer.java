@@ -122,28 +122,13 @@ public class Layer implements Serializable {
                     double newWeight = weight.getValue() + (learningRate * errorGradient * weight.getKey().getOutput());
                     node.getInputLayer().put(weight.getKey(), newWeight);
 
-                    double gradientSum = previousLayer.errGradientSum.get(node) + (newWeight * errorGradient);
-                    previousLayer.errGradientSum.put(node, gradientSum);
+                    Double sumTillNow = previousLayer.errGradientSum.containsKey(weight.getKey()) ? previousLayer.errGradientSum.get(weight.getKey()) : 0;
+                    double gradientSum = sumTillNow + (newWeight * errorGradient);
+                    previousLayer.errGradientSum.put(weight.getKey(), gradientSum);
                 }
             }
         }
+        this.errGradientSum.clear();
         previousLayer.backPropagateError(learningRate);
-    }
-
-
-    public Layer deepCopy() {
-        Layer layer = null;
-        if (this instanceof InputLayer) layer = new InputLayer();
-        else if (this instanceof OutputLayer) layer = new OutputLayer();
-        ArrayList<Node> nodeCopy = new ArrayList<>(nodes.size());
-        for (Node node : nodes) {
-            nodeCopy.add(node.deepCopy());
-        }
-
-        if (layer != null) {
-            layer.nodes = nodeCopy;
-        }
-
-        return layer;
     }
 }

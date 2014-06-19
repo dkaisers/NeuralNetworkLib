@@ -38,17 +38,6 @@ public class Neuron extends Node {
         return sigmoid(inputSum);
     }
 
-    @Override
-    public Node deepCopy() {
-        Neuron copy = new Neuron();
-        copy.inputLayer = new HashMap<>();
-
-        for (Map.Entry<Node, Double> entry : inputLayer.entrySet()) {
-            copy.inputLayer.put(entry.getKey(), entry.getValue());
-        }
-        return copy;
-    }
-
     public void setInputLayer(HashMap<Node, Double> inputLayer) {
         this.inputLayer = inputLayer;
     }

@@ -41,20 +41,20 @@ public class OutputLayer extends Layer {
      * @param learningRate learningRate.
      */
     public void backPropagateError(Double[] expectedOutput, double learningRate) {
-        // Back propagation
         for (int i = 0; i < this.nodes.size(); i++) {
             Neuron node = (Neuron) this.nodes.get(i);
-            
+
             double output = node.getOutput();
             double error = expectedOutput[i] - output;
             double errorGradient = error * output * (1 - output);
-            
+
             for (Map.Entry<Node, Double> weight : node.getInputLayer().entrySet()) {
                 double newWeight = weight.getValue() + (learningRate * errorGradient * weight.getKey().getOutput());
                 node.getInputLayer().put(weight.getKey(), newWeight);
-                
-                double gradientSum = previousLayer.errGradientSum.get(node) + (newWeight * errorGradient);
-                previousLayer.errGradientSum.put(node, gradientSum);
+
+                double gradientSum = previousLayer.errGradientSum.containsKey(weight.getKey()) ? previousLayer.errGradientSum.get(weight.getKey()) : 0;
+                gradientSum += (newWeight * errorGradient);
+                previousLayer.errGradientSum.put(weight.getKey(), gradientSum);
             }
         }
         

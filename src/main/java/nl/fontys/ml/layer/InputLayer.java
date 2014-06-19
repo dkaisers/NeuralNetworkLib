@@ -11,7 +11,7 @@ import nl.fontys.ml.neuron.InputNode;
 public class InputLayer extends Layer{
 
     protected InputLayer(){
-        super(null,true);
+        super(null,false);
     }
 
     public InputLayer(int numberOfInputNodes) {

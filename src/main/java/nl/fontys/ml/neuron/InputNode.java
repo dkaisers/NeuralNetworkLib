@@ -1,5 +1,7 @@
 package nl.fontys.ml.neuron;
 
+import java.util.HashMap;
+
 /**
  * Input neurons are placed only in the input layer and provide the starting
  * values to calculate the output. Starting values are gained from the
@@ -37,11 +39,6 @@ public class InputNode extends Node {
     @Override
     public double getOutput() {
         return this.inputValue;
-    }
-
-    @Override
-    public Node deepCopy() {
-        return new InputNode(inputValue);
     }
 
 }

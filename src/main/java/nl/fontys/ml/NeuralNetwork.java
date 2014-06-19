@@ -37,6 +37,15 @@ public class NeuralNetwork implements Serializable {
     private InputLayer inputLayer;
     private OutputLayer outputLayer;
 
+    public NeuralNetwork(int iteration, double learningRate, int numberOfClasses, int numberOfInputNodes, int numberOfHiddenLayers, int numberOfNodesPerLayer) {
+        this.iteration = iteration;
+        this.learningRate = learningRate;
+        this.numberOfClasses = numberOfClasses;
+        this.numberOfInputNodes = numberOfInputNodes;
+        this.numberOfHiddenLayers = numberOfHiddenLayers;
+        this.numberOfNodesPerLayer = numberOfNodesPerLayer;
+    }
+
     public NeuralNetwork(double learningRate, int numberOfClasses, int numberOfInputNodes, int numberOfHiddenLayers, int numberOfNodesPerLayer) {
         // Set data
         this.learningRate = learningRate;
@@ -74,11 +83,14 @@ public class NeuralNetwork implements Serializable {
         // Copy network
 
         NeuralNetwork newNetwork = deepCopy();
-        newNetwork.iteration = iteration++;
 
         // Train copied network
         for (int i = 0; i < numberOfIterations; i++) {
+            newNetwork.iteration = iteration++;
+            System.out.println("Iteration: " + newNetwork.iteration);
+
             // Go through every instance
+            int e = 0;
             for (Instance instance : trainingData) {
 
                 // Set input data for instance
@@ -86,14 +98,32 @@ public class NeuralNetwork implements Serializable {
                 Double[] output = newNetwork.outputLayer.getOutput();
 
                 // Back propagate error if classification was wrong
-                if (!Arrays.equals(output, instance.getOutputData())) {
+                if (!outputEqualsTarget(output, instance.getOutputData(), 0.5)) {
+                    e++;
                     newNetwork.outputLayer.backPropagateError(instance.getOutputData(), learningRate);
                 }
             }
+            System.out.println(e + " errors > " + ((e + 0d) / trainingData.size() * 100) + "%");
+            System.out.println("-> End of training for instance.\n");
         }
 
         // Return new network
         return newNetwork;
+    }
+
+    private boolean outputEqualsTarget(Double[] output, Double[] target, double delta) {
+        if (output.length != target.length)
+            return false;
+
+        for (int i = 0; i < output.length; i++) {
+            Double o = output[i];
+            Double t = target[i];
+
+            if (Math.abs(o - t) > delta)
+                return false;
+        }
+
+        return true;
     }
 
     /**
@@ -192,11 +222,27 @@ public class NeuralNetwork implements Serializable {
      * @return Copied neural network.
      */
     public NeuralNetwork deepCopy() {
-        NeuralNetwork newNetwork = new NeuralNetwork(this.learningRate, this.numberOfClasses, this.numberOfInputNodes, this.numberOfHiddenLayers, this.numberOfNodesPerLayer);
-        newNetwork.iteration = this.iteration;
-        newNetwork.inputLayer = (InputLayer) inputLayer.deepCopy();
-        newNetwork.outputLayer = (OutputLayer) outputLayer.deepCopy();
-        return newNetwork;
+        NeuralNetwork copy = null;
+
+        try {
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            ObjectOutputStream out = new ObjectOutputStream(bos);
+            out.writeObject(this);
+
+            ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
+            ObjectInputStream in = new ObjectInputStream(bis);
+
+            copy = (NeuralNetwork) in.readObject();
+
+            in.close();
+            bis.close();
+            out.close();
+            bos.close();
+        } catch (IOException | ClassNotFoundException ex) {
+            ex.printStackTrace();
+        }
+
+        return copy;
     }
 
     public int getIteration() {
