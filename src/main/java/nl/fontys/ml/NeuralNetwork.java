@@ -86,11 +86,11 @@ public class NeuralNetwork implements Serializable {
 
         // Train copied network
         for (int i = 0; i < numberOfIterations; i++) {
-            newNetwork.iteration = iteration++;
+            newNetwork.iteration++;
             System.out.println("Iteration: " + newNetwork.iteration);
 
             // Go through every instance
-            int e = 0;
+            double e = 0;
             for (Instance instance : trainingData) {
 
                 // Set input data for instance
@@ -98,17 +98,25 @@ public class NeuralNetwork implements Serializable {
                 Double[] output = newNetwork.outputLayer.getOutput();
 
                 // Back propagate error if classification was wrong
-                if (!outputEqualsTarget(output, instance.getOutputData(), 0.5)) {
-                    e++;
+                e += getError(output, instance.getOutputData());
+                if (e > 0.2d) {
                     newNetwork.outputLayer.backPropagateError(instance.getOutputData(), learningRate);
                 }
             }
-            System.out.println(e + " errors > " + ((e + 0d) / trainingData.size() * 100) + "%");
+            System.out.println(e + " errors > " + (e / trainingData.size()));
             System.out.println("-> End of training for instance.\n");
         }
 
         // Return new network
         return newNetwork;
+    }
+
+    private double getError(Double[] output, Double[] target) {
+        double sum = 0;
+        for (int i = 0; i < output.length; i++) {
+            sum += Math.pow(target[i] - output[i], 2);
+        }
+        return sum;
     }
 
     private boolean outputEqualsTarget(Double[] output, Double[] target, double delta) {

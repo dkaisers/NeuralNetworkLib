@@ -32,6 +32,6 @@ public abstract class Node implements Serializable {
      * @return f(x) = e^x / (1 + e^x).
      */
     public final double sigmoid(double x) {
-        return 1d / (1 + Math.exp(-x));
+        return 1.0d / (1.0d + Math.exp(-x));
     }
 }
