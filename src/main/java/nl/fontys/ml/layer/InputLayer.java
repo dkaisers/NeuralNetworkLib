@@ -36,6 +36,8 @@ public class InputLayer extends Layer{
             InputNode node = (InputNode) this.nodes.get(i);
             node.setInputValue(inputData[i-1]);
         }
+
+        nextLayer.clearCache();
     }
 
     @Override

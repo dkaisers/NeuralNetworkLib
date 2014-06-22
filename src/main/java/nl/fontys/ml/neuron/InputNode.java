@@ -41,4 +41,9 @@ public class InputNode extends Node {
         return this.inputValue;
     }
 
+    @Override
+    public void clearCache() {
+
+    }
+
 }

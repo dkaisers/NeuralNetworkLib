@@ -13,7 +13,7 @@ public abstract class Node implements Serializable {
     /**
      * The layer, the node belongs to for the purpose of backpropagating the error.
      */
-    private Layer layer;
+    protected Layer layer;
 
     public Layer getLayer() {
         return layer;
@@ -24,6 +24,8 @@ public abstract class Node implements Serializable {
     }
 
     public abstract double getOutput();
+
+    public abstract void clearCache();
 
     /**
      * Sigmoid activation function.

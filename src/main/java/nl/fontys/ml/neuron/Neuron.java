@@ -6,8 +6,11 @@
 
 package nl.fontys.ml.neuron;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Future;
 
 /**
  * Output neurons get a their information to calculate the outcome from their
@@ -16,6 +19,8 @@ import java.util.Map;
  * @author Dominik Kaisers <d.kaisers@student.fontys.nl>
  */
 public class Neuron extends Node {
+
+    private Double cache = null;
 
     /**
      * HashMap with the weights for every input neuron.
@@ -29,13 +34,22 @@ public class Neuron extends Node {
      */
     @Override
     public double getOutput() {
-        double inputSum = 0;
+        if (cache == null) {
+            double inputSum = 0;
 
-        for (Map.Entry<Node, Double> input : inputLayer.entrySet()) {
-            inputSum += input.getValue() * input.getKey().getOutput();
+            for (Map.Entry<Node, Double> input : inputLayer.entrySet()) {
+                inputSum += input.getValue() * input.getKey().getOutput();
+            }
+
+            cache = sigmoid(inputSum);
         }
 
-        return sigmoid(inputSum);
+        return cache;
+    }
+
+    @Override
+    public void clearCache() {
+        cache = null;
     }
 
     public void setInputLayer(HashMap<Node, Double> inputLayer) {

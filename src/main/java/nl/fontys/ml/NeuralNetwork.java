@@ -1,6 +1,7 @@
 package nl.fontys.ml;
 
 import java.io.*;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -90,7 +91,8 @@ public class NeuralNetwork implements Serializable {
             System.out.println("Iteration: " + newNetwork.iteration);
 
             // Go through every instance
-            double e = 0;
+            double errorSum = 0d;
+            int errorCount = 0;
             for (Instance instance : trainingData) {
 
                 // Set input data for instance
@@ -98,13 +100,15 @@ public class NeuralNetwork implements Serializable {
                 Double[] output = newNetwork.outputLayer.getOutput();
 
                 // Back propagate error if classification was wrong
-                e += getError(output, instance.getOutputData());
-                if (e > 0.2d) {
+                double error = getError(output, instance.getOutputData());
+                errorSum += error;
+                if (error > 0.1d) {
                     newNetwork.outputLayer.backPropagateError(instance.getOutputData(), learningRate);
+                    errorCount++;
                 }
             }
-            System.out.println(e + " errors > " + (e / trainingData.size()));
-            System.out.println("-> End of training for instance.\n");
+            System.out.println(errorCount + " errors with an average error of " + (errorSum / errorCount));
+            System.out.println("-> End of training for iteration. " + (errorCount / (0d + trainingData.size()) * 100) + "% of all instances classified wrongly.\n");
         }
 
         // Return new network
@@ -116,7 +120,7 @@ public class NeuralNetwork implements Serializable {
         for (int i = 0; i < output.length; i++) {
             sum += Math.pow(target[i] - output[i], 2);
         }
-        return sum;
+        return sum / output.length;
     }
 
     private boolean outputEqualsTarget(Double[] output, Double[] target, double delta) {

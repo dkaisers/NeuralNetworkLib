@@ -7,6 +7,9 @@ package nl.fontys.ml.layer;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import nl.fontys.ml.neuron.InputNode;
 import nl.fontys.ml.neuron.Neuron;
@@ -66,6 +69,8 @@ public class Layer implements Serializable {
         this.nodes = new ArrayList<>();
         if (createBiasNode) {
             InputNode bias = new InputNode(1);
+            bias.setLayer(this);
+
             this.nodes.add(bias);
             this.errGradientSum.put(bias, 0d);
         }
@@ -83,6 +88,7 @@ public class Layer implements Serializable {
         for (int i = 0; i < numberOfRandomNodes; i++) {
             Neuron neuron = new Neuron();
             neuron.setInputLayer(inputLayer);
+            neuron.setLayer(this);
             nodes.add(neuron);
         }
     }
@@ -130,5 +136,15 @@ public class Layer implements Serializable {
         }
         this.errGradientSum.clear();
         previousLayer.backPropagateError(learningRate);
+    }
+
+    public void clearCache() {
+        for (Node node : nodes) {
+            node.clearCache();
+        }
+
+        if (nextLayer != null) {
+            nextLayer.clearCache();
+        }
     }
 }
